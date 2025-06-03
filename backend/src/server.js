@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 import { initDB } from './config/db.js';
 import rateLimiterMiddleware from './middleware/rate-limiter.middleware.js';
-import transactionsRoute from './routes/transaction.route.js';
+import transactionsRoute from './routes/transactions.route.js';
 
 const app = express();
 app.use(rateLimiterMiddleware);

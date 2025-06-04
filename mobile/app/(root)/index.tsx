@@ -1,11 +1,17 @@
-import { SignedIn, useUser } from '@clerk/clerk-expo';
+import { useUser } from '@clerk/clerk-expo';
 import { Text, View } from 'react-native';
-import { SignOutButton } from '@/components/SignOutButton';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useEffect } from 'react';
+import PageLoader from '@/components/PageLoader';
+import { styles } from '@/assets/styles/home.styles';
+
+import Header from '@/components/Header';
+import BalanceCard from '@/components/BalanceCard';
+import TransactionList from '@/components/TransactionList';
 
 export default function Page() {
   const { user } = useUser();
+
   const { loadData, loading, deleteTransaction, transactions, summary } = useTransactions(
     user?.id!
   );
@@ -14,20 +20,20 @@ export default function Page() {
     loadData();
   }, [loadData]);
 
+  if (loading) return <PageLoader />;
+
   return (
-    <View>
-      <SignedIn>
-        <Text>Hello {user?.emailAddresses[0].emailAddress}</Text>
-        <SignOutButton />
-      </SignedIn>
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <>
-          <Text>{JSON.stringify(transactions, null, 2)}</Text>
-          <Text>{JSON.stringify(summary, null, 2)}</Text>
-        </>
-      )}
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <Header user={user} />
+
+        <BalanceCard summary={summary} />
+
+        <View style={styles.transactionsHeaderContainer}>
+          <Text style={styles.sectionTitle}>Recent Transactions</Text>
+        </View>
+      </View>
+      <TransactionList transactions={transactions} onDelete={deleteTransaction} />
     </View>
   );
 }

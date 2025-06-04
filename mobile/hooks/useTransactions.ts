@@ -5,9 +5,12 @@ const API_URL = process.env.EXPO_PUBLIC_BASE_API_URL;
 
 export interface Transactions {
   userId: number;
-  id: number;
+  id: string;
   title: string;
   completed: boolean;
+  amount: number;
+  category: string;
+  created_at: string;
 }
 
 export interface Summary {
@@ -54,6 +57,8 @@ export const useTransactions = (userId: string) => {
   }, [fetchTransactions, fetchSummary, userId]);
 
   const deleteTransaction = async (id: string) => {
+    if (!id) return;
+    setLoading(true);
     try {
       const response = await fetch(`${API_URL}/transactions/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to delete transaction');

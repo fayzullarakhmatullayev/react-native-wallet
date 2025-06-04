@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import React from 'react';
 import { Transactions } from '@/hooks/useTransactions';
 import { styles } from '@/assets/styles/home.styles';
@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/colors';
 import { formatDate } from '@/lib/utils';
 import { useRouter } from 'expo-router';
+import { useUser } from '@clerk/clerk-expo';
 
 const CATEGORY_ICONS = {
   'Food & Drinks': 'fast-food',
@@ -19,9 +20,13 @@ const CATEGORY_ICONS = {
 type PropsType = {
   transactions: Transactions[];
   onDelete: (id: string) => Promise<void>;
+  loadData: (id: string) => Promise<void>;
 };
 
-const TransactionList = ({ transactions, onDelete }: PropsType) => {
+const TransactionList = ({ transactions, onDelete, loadData }: PropsType) => {
+  const [refreshing, setRefreshing] = React.useState(false);
+  const { user } = useUser();
+
   const handleDelete = (id: string) => {
     try {
       Alert.alert('Delete Transaction', 'Are you sure you want to delete this transaction?', [
@@ -29,13 +34,23 @@ const TransactionList = ({ transactions, onDelete }: PropsType) => {
         {
           text: 'Delete',
           onPress: async () => {
-            await onDelete(id);
+            setRefreshing(true);
+            await onDelete(id).finally(() => {
+              setRefreshing(false);
+            });
           }
         }
       ]);
     } catch (error) {
       console.error('🚫 Error deleting transaction:', error);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadData(user?.id!).finally(() => {
+      setRefreshing(false);
+    });
   };
 
   return (
@@ -46,6 +61,7 @@ const TransactionList = ({ transactions, onDelete }: PropsType) => {
       renderItem={({ item }) => <TransactionItem item={item} onDelete={handleDelete} />}
       ListEmptyComponent={<NoTransactionsFound />}
       showsHorizontalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
     />
   );
 };

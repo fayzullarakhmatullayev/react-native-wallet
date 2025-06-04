@@ -24,7 +24,7 @@ const BalanceCard = ({ summary }: PropsType) => {
         <View style={styles.balanceStatItem}>
           <Text style={styles.balanceStatLabel}>Expenses</Text>
           <Text style={[styles.balanceStatAmount, { color: COLORS.expense }]}>
-            -${Math.abs(Number(summary.income)).toFixed(2)}
+            -${Math.abs(Number(summary.expenses)).toFixed(2)}
           </Text>
         </View>
       </View>

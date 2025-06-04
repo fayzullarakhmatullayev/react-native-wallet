@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 
 const API_URL = process.env.EXPO_PUBLIC_BASE_API_URL;
 
@@ -46,29 +45,25 @@ export const useTransactions = (userId: string) => {
 
   const loadData = useCallback(async () => {
     if (!userId) return;
-    setLoading(true);
+
     try {
       await Promise.all([fetchTransactions(), fetchSummary()]);
     } catch (error) {
       console.error('🚫 Error loading data:', error);
-    } finally {
-      setLoading(false);
     }
   }, [fetchTransactions, fetchSummary, userId]);
 
   const deleteTransaction = async (id: string) => {
     if (!id) return;
-    setLoading(true);
+
     try {
       const response = await fetch(`${API_URL}/transactions/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to delete transaction');
       await loadData();
-      Alert.alert('Success', 'Transaction deleted successfully');
     } catch (error) {
       console.error('🚫 Error deleting transaction:', error);
-      Alert.alert('Error', 'Failed to delete transaction');
     }
   };
 
-  return { transactions, summary, loading, loadData, deleteTransaction };
+  return { transactions, summary, loading, loadData, deleteTransaction, setLoading };
 };

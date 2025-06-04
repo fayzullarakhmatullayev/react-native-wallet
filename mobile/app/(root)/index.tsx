@@ -12,13 +12,12 @@ import TransactionList from '@/components/TransactionList';
 export default function Page() {
   const { user } = useUser();
 
-  const { loadData, loading, deleteTransaction, transactions, summary } = useTransactions(
-    user?.id!
-  );
+  const { loadData, loading, deleteTransaction, transactions, summary, setLoading } =
+    useTransactions(user?.id!);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    loadData().finally(() => setLoading(false));
+  }, [loadData, loading, setLoading]);
 
   if (loading) return <PageLoader />;
 
@@ -33,7 +32,11 @@ export default function Page() {
           <Text style={styles.sectionTitle}>Recent Transactions</Text>
         </View>
       </View>
-      <TransactionList transactions={transactions} onDelete={deleteTransaction} />
+      <TransactionList
+        transactions={transactions}
+        onDelete={deleteTransaction}
+        loadData={loadData}
+      />
     </View>
   );
 }

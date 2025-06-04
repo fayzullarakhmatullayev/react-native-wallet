@@ -37,11 +37,13 @@ export default function SignUpScreen() {
       // Set 'pendingVerification' to true to display second form
       // and capture OTP code
       setPendingVerification(true);
-    } catch (err) {
+    } catch (err: any) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
+
+      setError(err?.errors[0].message || 'Sign up failed');
+
       console.error(JSON.stringify(err, null, 2));
-      setError('Sign up failed');
     }
   };
 
@@ -65,11 +67,9 @@ export default function SignUpScreen() {
         // complete further steps.
         console.error(JSON.stringify(signUpAttempt, null, 2));
       }
-    } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
+    } catch (err: any) {
+      setError(err?.errors[0].message || 'Sign up failed');
       console.error(JSON.stringify(err, null, 2));
-      setError('Verification failed');
     }
   };
 

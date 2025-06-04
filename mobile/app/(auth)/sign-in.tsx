@@ -44,11 +44,7 @@ export default function Page() {
         setError('Sign in failed');
       }
     } catch (err: any) {
-      if (err.errors[0].code === 'form_password_incorrect') {
-        setError('Incorrect password');
-      } else {
-        setError('Sign in failed');
-      }
+      setError(err?.errors[0].message || 'Sign in failed');
 
       console.error(JSON.stringify(err, null, 2));
     }

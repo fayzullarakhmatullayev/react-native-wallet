@@ -116,6 +116,11 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.text
   },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',

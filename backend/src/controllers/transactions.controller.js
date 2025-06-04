@@ -11,6 +11,7 @@ export const getTransactionsByUserId = async (req, res) => {
     const transactions = await sql`
         SELECT * FROM transactions
         WHERE user_id = ${userId}
+        ORDER BY id DESC
       `;
     res.json(transactions);
   } catch (error) {

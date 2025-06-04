@@ -1,13 +1,14 @@
 import { useUser } from '@clerk/clerk-expo';
 import { Text, View } from 'react-native';
 import { useTransactions } from '@/hooks/useTransactions';
-import { useEffect } from 'react';
 import PageLoader from '@/components/PageLoader';
 import { styles } from '@/assets/styles/home.styles';
+import { useFocusEffect } from '@react-navigation/native';
 
 import Header from '@/components/Header';
 import BalanceCard from '@/components/BalanceCard';
 import TransactionList from '@/components/TransactionList';
+import { useCallback, useEffect } from 'react';
 
 export default function Page() {
   const { user } = useUser();
@@ -16,8 +17,14 @@ export default function Page() {
     useTransactions(user?.id!);
 
   useEffect(() => {
-    loadData().finally(() => setLoading(false));
-  }, [loadData, loading, setLoading]);
+    setLoading(true);
+  }, [setLoading]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData().finally(() => setLoading(false));
+    }, [loadData, setLoading])
+  );
 
   if (loading) return <PageLoader />;
 
